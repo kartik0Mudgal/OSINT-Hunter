@@ -19,6 +19,7 @@ from bs4 import BeautifulSoup
 import time
 import random
 import logging
+import os
 
 # Try to import user-agent, fallback to manual user agents
 try:
@@ -433,22 +434,36 @@ def home():
     })
 
 if __name__ == '__main__':
-    print("🚀 Starting OSINT Username Hunter Backend...")
-    print(f"📊 Platforms configured: {sum(len(platforms) for platforms in PLATFORMS.values())}")
-    print("🌐 Server starting on http://localhost:5000")
-    print("💡 Frontend should connect automatically")
-    print("\n📋 Required packages:")
-    print("   pip install flask flask-cors requests beautifulsoup4 user-agent")
-    print("\n🔍 Usage:")
-    print("   1. Keep this running")
-    print("   2. Open index.html in your browser")
-    print("   3. Start searching usernames!")
-    print("\n" + "="*60)
+    import os
+    
+    # Check if we're running on Render or locally
+    port = int(os.environ.get('PORT', 5000))
+    is_production = os.environ.get('RENDER') is not None
+    
+    if not is_production:
+        # Local development messages
+        print("🚀 Starting OSINT Username Hunter Backend...")
+        print(f"📊 Platforms configured: {sum(len(platforms) for platforms in PLATFORMS.values())}")
+        print("🌐 Server starting on http://localhost:5000")
+        print("💡 Frontend should connect automatically")
+        print("\n📋 Required packages:")
+        print("   pip install flask flask-cors requests beautifulsoup4 user-agent")
+        print("\n🔍 Usage:")
+        print("   1. Keep this running")
+        print("   2. Open index.html in your browser")
+        print("   3. Start searching usernames!")
+        print("\n" + "="*60)
+    else:
+        # Production messages
+        print("🚀 OSINT Username Hunter Backend starting on Render...")
+        print(f"📊 Platforms configured: {sum(len(platforms) for platforms in PLATFORMS.values())}")
     
     try:
-        app.run(debug=True, host='0.0.0.0', port=5000)
+        # Use 0.0.0.0 host for production, debug=False for production
+        app.run(debug=not is_production, host='0.0.0.0', port=port)
     except KeyboardInterrupt:
         print("\n👋 OSINT Username Hunter stopped.")
     except Exception as e:
         print(f"\n❌ Error starting server: {e}")
-        print("Make sure port 5000 is available.")
+        if not is_production:
+            print("Make sure port 5000 is available.")

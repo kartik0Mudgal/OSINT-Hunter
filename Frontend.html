@@ -909,7 +909,7 @@
 
                 <h3>🚀 Getting Started</h3>
                 <p>
-                    To use CyberTrace OSINT, ensure you have the Flask backend running on localhost:5000. 
+                    To use CyberTrace OSINT, ensure you have the Flask backend running. 
                     Simply enter a username in the search field and let our system verify its presence 
                     across multiple platforms in real-time.
                 </p>
@@ -919,7 +919,10 @@
 
     <script>
         let searchResults = [];
-        const BACKEND_URL = 'http://localhost:5000';
+        // Auto-detect if we're running locally or on production
+        const BACKEND_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+            ? 'http://localhost:5000' 
+            : window.location.origin;
         
         // Platform styles for display
         const platformStyles = {
